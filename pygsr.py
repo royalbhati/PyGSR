@@ -23,17 +23,17 @@ class Pygsr:
 
     def record(self, time, device_i=None):
         audio = PyAudio()
-        print audio.get_device_info_by_index(1)
+        print(audio.get_device_info_by_index(1))
         stream = audio.open(input_device_index=device_i,output_device_index=device_i,format=self.format, channels=self.channel,
                             rate=self.rate, input=True,
                             frames_per_buffer=self.chunk)
-        print "REC: "
+        print("REC: ")
         frames = []
         for i in range(0, self.rate / self.chunk * time):
             data = stream.read(self.chunk)
             frames.append(data)
         stream.stop_stream()
-        print "END"
+        print("END")
         stream.close()
         audio.terminate()
         write_frames = open_audio(self.file, 'wb')
@@ -47,7 +47,9 @@ class Pygsr:
     def speech_to_text(self, language):
         url = "http://www.google.com/speech-api/v1/recognize?lang=%s" % language
         file_upload = "%s.flac" % self.file
-        audio = open(file_upload, "rb").read()
+	with open(file_upload, "rb") as f:
+		audio=f.read()
+        
         header = {"Content-Type": "audio/x-flac; rate=48000"}
         data = Request(url, audio, header)
         try:
